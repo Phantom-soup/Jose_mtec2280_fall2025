@@ -28,7 +28,7 @@ void loop() {
   digitalWrite(light2, HIGH);
   digitalWrite(light3, HIGH);
   value += 2;
-  delay(400);
+  delay(500);
 
   digitalWrite(light1, LOW);
   value += 2;
@@ -38,7 +38,7 @@ void loop() {
   else{
     digitalWrite(light4, LOW);
   }
-  delay(400);
+  delay(500);
 
   if (value > 9){
     value = 7;
@@ -47,5 +47,6 @@ void loop() {
   digitalWrite(light2, LOW);
   digitalWrite(light3, LOW);
   value -= 3;
+  delay(300);
 
 }

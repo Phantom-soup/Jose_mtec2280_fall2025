@@ -23,11 +23,18 @@ function setup()
   textAlign(CENTER, CENTER);
   rectMode(CENTER);
   textSize(24);
-  strokeWeight(4);
+  strokeWeight(1);
   stroke(127);
 
   xval = width/2;
   yval = height/2;
+
+  for(let i = 0; i < width ; i++)
+  {
+    let c = map(i, 0, width, 0, 255);  //map i to 0-255 range for color
+    stroke(c * 2, c, 0);    //change stroke color for each x position, red is scaled to 2x
+    line(i, 0, i, random(0,500));
+  }
 
   
   serial = new p5.SerialPort();             
@@ -43,6 +50,7 @@ function setup()
 
 function draw() 
 {
+  /*
   background(255);
   stroke(127);
   
@@ -67,23 +75,16 @@ function draw()
   line(width-50, 0, width-50, 255);
   rect(width/8, pot1, 60, 20);
   rect(width-50, pot2, 60, 20);
+  */
 }
 
 function mousePressed() 
 {
-  if (dist(mouseX, mouseY, width/2, height/2) < 70) 
-  {
+
     rxFlag = !rxFlag; 
 
-    if (rxFlag)
-    {
       serial.write('A'); 
-    }
-    else   
-    {
-      serial.write('B'); 
-    }
-  }
+
 }
 
 function portOpen() 
