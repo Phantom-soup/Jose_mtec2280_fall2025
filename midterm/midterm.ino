@@ -49,7 +49,7 @@ void setup() {
   int simplify = map(adcVal, 0, 1023, 0, 255);
   insertValue = simplify;
   previousValue = insertValue;
-  Serial.begin(115200);
+  Serial.begin(9600);
 }
 
 void loop() {
@@ -150,5 +150,7 @@ void loop() {
   //Serial.println(test);
   //Serial.printf("Guess = %i | dGuess = %i | Hint = %i | dHint = %i \n",guessButtonState, doubleGuess, hintButtonState, doubleHint);
   //Serial.printf("Hint = %i | Red = %i | Goal = %i \n", hintAsked, redBuster, goalReached);
-  Serial.printf("G = %i | C = %i | I = %i | P = %i | B = %i \n", goalValue, currentValue, insertValue, previousValue, blueLightSpecial);
+  //Serial.printf("G = %i | C = %i | I = %i | P = %i | B = %i \n", goalValue, currentValue, insertValue, previousValue, blueLightSpecial);
+  Serial.write(currentValue);
+  //Serial.println(currentValue);
 }
