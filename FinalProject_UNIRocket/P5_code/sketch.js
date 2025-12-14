@@ -53,6 +53,12 @@ class Spaceship {
     this.thrusting = true;
   }
 
+  gravity() {
+    let gravity = 
+    force.mult(0.5);
+    this.applyForce(force);
+  }
+
   wrapEdges() {
     let buffer = this.r * 2;
     if (this.position.x > width + buffer) this.position.x = -buffer;
@@ -88,11 +94,32 @@ class Spaceship {
   }
 }
 
+let serial;
+let portName = 'COM4';
+let options = { baudRate: 9600};
+
+let rxFlag = false; 
+let firstContact = false; 
+let sensors = [0, 0, 0];
+let pot1 = 0;
+let button1 = 0;
+let button2 = 0;
+
 let ship;
 
 function setup() {
   createCanvas(800, 600);
   ship = new Spaceship();
+
+  serial = new p5.SerialPort();
+  serial.on('list', printList);
+  serial.on('connected', serverConnected);
+  serial.on('open', portOpen);
+  serial.on('data', serialEvent);
+  serial.on('error', serialError);
+  serial.on('close', portClose);
+  serial.list();
+  serial.open(portName, options);
 }
 
 function draw() {
@@ -107,10 +134,8 @@ function draw() {
   // Draw ship
   ship.show();
 
-  // fill(0);
-  // text("left right arrows to turn, z to thrust",10,height-5);
+  
 
-  // Turn or thrust the ship depending on what key is pressed
   if (keyCode == LEFT_ARROW) {
     ship.turn(-0.03);
   } else if (keyCode == RIGHT_ARROW) {
@@ -122,4 +147,77 @@ function draw() {
   } else {
     ship.applyForce(gravity);
   }
+}
+
+function portOpen() 
+{
+  print("SERIAL PORT OPEN");
+}
+
+function portClose() 
+{
+  print("SERIAL PORT CLOSED");
+}
+
+function printList(portList) 
+{
+  print("List of Available Serial Ports: ");
+  for (var i = 0; i < portList.length; i++) 
+  {
+    print(i + portList[i]); 
+  }
+}
+
+function serialEvent()
+{
+  if (!firstContact)  
+  {
+    print("FIRST CONTACT"); 
+    firstContact = true;  
+  }
+  
+  if(rxFlag)  
+  {
+    let inString = serial.readStringUntil('\n'); 
+    if (inString.length > 0) 
+    {
+      print("Rx String: " + inString); 
+      sensors = split(inString, ','); 
+    
+      if(sensors.length >= 4) 
+      {
+        print(sensors); 
+
+        pot1 = Number(sensors[0]); 
+        pot1 = map(pot1, 0, 1023, 0, 255); 
+        pot1 = floor(pot1); 
+
+        button1 = Number(sensors[1]); 
+        button1 = map(button1, 0, 1, 0, 255); 
+
+        button2 = Number(sensors[2]); 
+        button2 = map(button2, 0, 1, 0, 255); 
+        
+        print("Button 1: " + button1 + " Button 2: " 
+          + button2 + " Pot 1: " + pot1);
+
+        serial.write('A');  
+      }
+    }
+  }
+  else
+  {
+    let inString = serial.readStringUntil('\n'); 
+    print(inString); 
+  }
+}
+
+function serialError(err) 
+{
+  print('SERIAL ERROR: ' + err);
+}
+
+function serverConnected() 
+{
+  print("CONNECTED TO SERIAL SERVER");
 }
