@@ -95,15 +95,14 @@ class Spaceship {
 }
 
 let serial;
-let portName = 'COM4';
+let portName = 'COM5';
 let options = { baudRate: 9600};
 
 let rxFlag = false; 
 let firstContact = false; 
-let sensors = [0, 0, 0];
+let sensors = [0, 0];
 let pot1 = 0;
 let button1 = 0;
-let button2 = 0;
 
 let ship;
 
@@ -134,19 +133,22 @@ function draw() {
   // Draw ship
   ship.show();
 
-  
-
-  if (keyCode == LEFT_ARROW) {
-    ship.turn(-0.03);
-  } else if (keyCode == RIGHT_ARROW) {
-    ship.turn(0.03);
+  if (pot1 < 200) {
+    ship.turn((pot1 / 100));
+  } else if (pot1 > 57) {
+    ship.turn((pot1 / 100) * -1);
   }
 
-  if (keyIsDown(90)) {
+  if (button1 == 1) {
     ship.thrust();
   } else {
     ship.applyForce(gravity);
   }
+}
+
+function mousePressed()
+{
+  rxFlag = true;
 }
 
 function portOpen() 
@@ -170,6 +172,7 @@ function printList(portList)
 
 function serialEvent()
 {
+
   if (!firstContact)  
   {
     print("FIRST CONTACT"); 
@@ -184,22 +187,17 @@ function serialEvent()
       print("Rx String: " + inString); 
       sensors = split(inString, ','); 
     
-      if(sensors.length >= 4) 
+      if(sensors.length >= 2) 
       {
         print(sensors); 
 
         pot1 = Number(sensors[0]); 
-        pot1 = map(pot1, 0, 1023, 0, 255); 
+        pot1 = map(pot1, 0, 1023, 0, 100); 
         pot1 = floor(pot1); 
 
         button1 = Number(sensors[1]); 
-        button1 = map(button1, 0, 1, 0, 255); 
-
-        button2 = Number(sensors[2]); 
-        button2 = map(button2, 0, 1, 0, 255); 
         
-        print("Button 1: " + button1 + " Button 2: " 
-          + button2 + " Pot 1: " + pot1);
+        print("pot 1: " + button1 + " but 1: " + pot1);
 
         serial.write('A');  
       }
