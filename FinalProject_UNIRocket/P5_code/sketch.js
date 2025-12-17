@@ -95,7 +95,7 @@ class Spaceship {
 }
 
 let serial;
-let portName = 'COM5';
+let portName = 'COM4';
 let options = { baudRate: 9600};
 
 let rxFlag = false; 
